@@ -1,0 +1,1 @@
+create table mysql.customer (id varchar(255) not null, email varchar(255), first_name varchar(255), last_name varchar(255), primary key (id))

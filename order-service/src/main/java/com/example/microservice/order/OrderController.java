@@ -2,6 +2,7 @@ package com.example.microservice.order;
 
 import com.example.microservice.order.dto.OrderDTO;
 import com.example.microservice.order.dto.OrderDTOResponse;
+import com.example.microservice.order.service.OrderService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -26,17 +27,13 @@ public class OrderController {
     @Value("${server.port}")
     private int serverPort;
 
-    @GetMapping("/")
+    @GetMapping
     public String home() {
         return "Order Microservice";
     }
 
-    @GetMapping(URI)
-    public List<Link> getCustomer() {
-        return List.of(Link.of(getBaseURL()+"/get", "Get All Orders"));
-    }
 
-    @GetMapping(URI+"/get")
+    @GetMapping(URI)
     @ResponseStatus(HttpStatus.OK)
     public List<OrderDTOResponse> getCustomers() {
         return orderService.getAllOrders()
@@ -44,7 +41,15 @@ public class OrderController {
                 .toList();
     }
 
-    @GetMapping(URI+"/get/{id}")
+    @PostMapping(URI)
+    @ResponseStatus(HttpStatus.CREATED)
+    public OrderDTOResponse addCustomer(@RequestBody OrderDTO orderDTO) {
+        return orderService.addOrder(orderDTO);
+    }
+
+
+
+    @GetMapping(URI+"/{id}")
     @ResponseStatus(HttpStatus.OK)
     public OrderDTOResponse getOrder(@PathVariable String id) {
         log.info("Looking for order with id : {}",id);
@@ -53,18 +58,10 @@ public class OrderController {
         return optionalProductDTO.orElse(null);
     }
 
-    private final Function<OrderDTOResponse, OrderDTOResponse> hateosLinkFunction = it -> it.add(Link.of(getBaseURL()+"/get/" + it.getOrderId()));
-
-    @PostMapping(URI)
-    @ResponseStatus(HttpStatus.CREATED)
-    public OrderDTOResponse addCustomer(@RequestBody OrderDTO orderDTO) {
-        return orderService.addOrder(orderDTO);
-    }
+    private final Function<OrderDTOResponse, OrderDTOResponse> hateosLinkFunction = it -> it.add(Link.of(getBaseURL()+"/" + it.getOrderId()));
 
     private String getBaseURL(){
         return "http://localhost:"+serverPort+URI;
     }
-
-
 
 }

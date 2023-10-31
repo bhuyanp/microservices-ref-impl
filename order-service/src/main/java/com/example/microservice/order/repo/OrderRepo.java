@@ -1,4 +1,4 @@
-package com.example.microservice.order;
+package com.example.microservice.order.repo;
 
 import com.example.microservice.order.model.Order;
 import org.springframework.data.mongodb.repository.MongoRepository;

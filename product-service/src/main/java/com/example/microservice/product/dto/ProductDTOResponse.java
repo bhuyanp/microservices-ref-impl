@@ -18,5 +18,5 @@ public class ProductDTOResponse extends RepresentationModel<ProductDTOResponse> 
     private String title;
     private String description;
     private BigDecimal price;
-
+    private Boolean available;
 }

@@ -8,7 +8,6 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
-import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 
 import java.math.BigDecimal;
 
@@ -29,9 +28,12 @@ public class ProductApplication {
         return args -> {
             productRepo.deleteAll();
 
-            System.out.println(productService.addProduct(new ProductDTO("Product A","description", BigDecimal.valueOf(100))));
-            System.out.println(productService.addProduct(new ProductDTO("Product B","description", BigDecimal.valueOf(200))));
-            System.out.println(productService.addProduct(new ProductDTO("Product C","description", BigDecimal.valueOf(300))));
+            System.out.println(productService
+                    .addProduct(new ProductDTO("Product A","description A", BigDecimal.valueOf(100),100)));
+            System.out.println(productService
+                    .addProduct(new ProductDTO("Product B","description B", BigDecimal.valueOf(200),200)));
+            System.out.println(productService
+                    .addProduct(new ProductDTO("Product C","description C", BigDecimal.valueOf(300),300)));
 
             System.out.println(productRepo.findAll());
         };

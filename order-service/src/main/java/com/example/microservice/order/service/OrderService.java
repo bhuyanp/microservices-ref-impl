@@ -1,34 +1,69 @@
-package com.example.microservice.order;
+package com.example.microservice.order.service;
 
 import com.example.microservice.order.dto.OrderDTO;
 import com.example.microservice.order.dto.OrderDTOResponse;
 import com.example.microservice.order.dto.OrderLineItemDTO;
+import com.example.microservice.order.dto.ProductAvailabilityDTOResponse;
 import com.example.microservice.order.model.Order;
 import com.example.microservice.order.model.OrderLineItem;
+import com.example.microservice.order.repo.OrderRepo;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.cglib.core.CollectionUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.util.UriBuilder;
 
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class OrderService {
     private final OrderRepo orderRepo;
+    private final WebClient webClient;
 
     public OrderDTOResponse addOrder(OrderDTO orderDTO) {
+
+        List<String> pids = orderDTO.getOrderLineItems()
+                .stream()
+                .map(OrderLineItemDTO::getProductId)
+                .toList();
+
+        ProductAvailabilityDTOResponse[] response = webClient.get().uri("http://localhost:8082/api/product/availability",
+                uriBuilder -> uriBuilder.queryParam("pid", pids).build())
+                .retrieve()
+                .bodyToMono(ProductAvailabilityDTOResponse[].class)
+                .block();
+
+        log.info("Availability check response:"+ Arrays.toString(response));
+        if (null==response || response.length==0) throw new IllegalArgumentException("Product not found. Please try again later.");
+
+
+        Map<String, Integer> availabilityMap = new HashMap<>();
+
+        Arrays.asList(response)
+                .forEach(it->availabilityMap.put(it.getProductId(),it.getAvailableCount()));
+
+
+        boolean allProductsInStock = orderDTO.getOrderLineItems().stream()
+                .allMatch(orderLineItemDTO ->
+                        orderLineItemDTO.getQuantity() <= availabilityMap.get(orderLineItemDTO.getProductId()));
+
+        if (!allProductsInStock) throw new IllegalArgumentException("Not enough inventory. Please try again later.");
         Order newlyCreatedOrder =
                 orderRepo.save(Order.builder()
                         .orderById(orderDTO.getOrderById())
                         .orderByEmail(orderDTO.getOrderByEmail())
                         .orderByName(orderDTO.getOrderByName())
-                        .orderDate(orderDTO.getOrderDate())
+                        .orderDate(null == orderDTO.getOrderDate() ? new Date() : orderDTO.getOrderDate())
                         .orderLineItems(orderDTO.getOrderLineItems()
                                 .stream()
                                 .map(orderLineItemDTO ->
                                         new OrderLineItem(orderLineItemDTO.getProductId(), orderLineItemDTO.getQuantity())).toList())
                         .build());
         return getOrderDTOResponse(newlyCreatedOrder);
+
     }
 
     public Optional<OrderDTOResponse> getOrder(String id) {
@@ -42,6 +77,7 @@ public class OrderService {
 
     private OrderDTOResponse getOrderDTOResponse(Order order) {
         return OrderDTOResponse.builder()
+                .orderId(order.getId())
                 .orderById(order.getOrderById())
                 .orderByEmail(order.getOrderByEmail())
                 .orderByName(order.getOrderByName())

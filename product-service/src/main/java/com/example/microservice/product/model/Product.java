@@ -1,8 +1,6 @@
 package com.example.microservice.product.model;
 
-import lombok.Builder;
-import lombok.Data;
-import lombok.RequiredArgsConstructor;
+import lombok.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -11,12 +9,15 @@ import java.math.BigDecimal;
 
 @Data
 @Document
-@RequiredArgsConstructor
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
 public class Product {
     @Id
     @GeneratedValue()
     private String id;
-    private final String title;
-    private final String description;
-    private final BigDecimal price;
+    private String title;
+    private String description;
+    private BigDecimal price;
+    private int availableInventory;
 }

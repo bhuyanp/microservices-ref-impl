@@ -1,5 +1,6 @@
 package com.example.microservice.product;
 
+import com.example.microservice.product.dto.ProductAvailabilityDTOResponse;
 import com.example.microservice.product.dto.ProductDTO;
 import com.example.microservice.product.dto.ProductDTOResponse;
 import com.example.microservice.product.service.ProductService;
@@ -31,43 +32,45 @@ public class ProductController {
         return "Product Microservice";
     }
 
-    @GetMapping(URI)
-    public List<Link> getCustomer() {
-        return List.of(Link.of(getBaseURL()+"/get", "Get All Products"));
-    }
-
     @PostMapping(URI)
     @ResponseStatus(HttpStatus.CREATED)
-    public ProductDTOResponse addCustomer(@RequestBody ProductDTO productDTO) {
+    public ProductDTOResponse addProduct(@RequestBody ProductDTO productDTO) {
         return productService.addProduct(productDTO);
     }
 
-    @GetMapping(URI+"/get")
+    @GetMapping(URI)
     @ResponseStatus(HttpStatus.OK)
-    public List<ProductDTOResponse> getCustomers() {
+    public List<ProductDTOResponse> getProducts() {
         return productService.getAllProducts()
                 .stream()
                 .map(hateosLinkFunction)
                 .toList();
     }
 
-    @GetMapping(URI+"/get/{id}")
+    @GetMapping(URI+"/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public ProductDTOResponse getCustomer(@PathVariable String id) {
+    public ProductDTOResponse getProduct(@PathVariable String id) {
         log.info("Looking for product with id : {}",id);
         Optional<ProductDTOResponse> optionalProductDTO = productService.getProduct(id)
                 .map(hateosLinkFunction);
         return optionalProductDTO.orElse(null);
     }
 
-    private final Function<ProductDTOResponse, ProductDTOResponse> hateosLinkFunction = it -> it.add(Link.of(getBaseURL()+"/get/" + it.getId()));
 
+    @GetMapping(URI+"/availability")
+    @ResponseStatus(HttpStatus.OK)
+    public List<ProductAvailabilityDTOResponse> getProductAvailability(@RequestParam List<String> pid) {
+        List<ProductAvailabilityDTOResponse> result = productService.getProductAvailabilities(pid);
+        log.info("getProductAvailability:{}",result);
+        return result;
+    }
+
+    private final Function<ProductDTOResponse, ProductDTOResponse> hateosLinkFunction = it -> it.add(Link.of(getBaseURL()+"/" + it.getId()));
 
 
     private String getBaseURL(){
         return "http://localhost:"+serverPort+URI;
     }
-
 
 }
 

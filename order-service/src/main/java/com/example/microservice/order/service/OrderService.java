@@ -21,7 +21,7 @@ import java.util.*;
 @RequiredArgsConstructor
 public class OrderService {
     private final OrderRepo orderRepo;
-    private final WebClient webClient;
+    private final WebClient.Builder webClientBuilder;
 
     public OrderDTOResponse addOrder(OrderDTO orderDTO) {
 
@@ -30,7 +30,7 @@ public class OrderService {
                 .map(OrderLineItemDTO::getProductId)
                 .toList();
 
-        ProductAvailabilityDTOResponse[] response = webClient.get().uri("http://localhost:8082/api/product/availability",
+        ProductAvailabilityDTOResponse[] response = webClientBuilder.build().get().uri("lb://product-service/api/product/availability",
                 uriBuilder -> uriBuilder.queryParam("pid", pids).build())
                 .retrieve()
                 .bodyToMono(ProductAvailabilityDTOResponse[].class)

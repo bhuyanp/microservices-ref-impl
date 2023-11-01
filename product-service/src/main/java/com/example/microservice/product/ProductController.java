@@ -65,12 +65,7 @@ public class ProductController {
         return result;
     }
 
-    private final Function<ProductDTOResponse, ProductDTOResponse> hateosLinkFunction = it -> it.add(Link.of(getBaseURL()+"/" + it.getId()));
-
-
-    private String getBaseURL(){
-        return "http://localhost:"+serverPort+URI;
-    }
+    private final Function<ProductDTOResponse, ProductDTOResponse> hateosLinkFunction = it -> it.add(Link.of(URI+"/" + it.getId()));
 
 }
 

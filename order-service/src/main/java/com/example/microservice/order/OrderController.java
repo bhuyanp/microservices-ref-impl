@@ -58,10 +58,6 @@ public class OrderController {
         return optionalProductDTO.orElse(null);
     }
 
-    private final Function<OrderDTOResponse, OrderDTOResponse> hateosLinkFunction = it -> it.add(Link.of(getBaseURL()+"/" + it.getOrderId()));
-
-    private String getBaseURL(){
-        return "http://localhost:"+serverPort+URI;
-    }
+    private final Function<OrderDTOResponse, OrderDTOResponse> hateosLinkFunction = it -> it.add(Link.of(URI+"/" + it.getOrderId()));
 
 }

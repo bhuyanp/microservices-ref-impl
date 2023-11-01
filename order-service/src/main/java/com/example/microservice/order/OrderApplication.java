@@ -14,7 +14,7 @@ public class OrderApplication {
 
     @Bean
     public CommandLineRunner getCommandLineRunner(OrderRepo orderRepo) {
-        return args -> {
+        return arƒgs -> {
             System.out.println(orderRepo.findAll());
         };
     }

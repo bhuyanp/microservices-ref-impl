@@ -14,13 +14,13 @@ import java.util.Optional;
 import java.util.function.Function;
 
 @RestController
-@RequestMapping("/")
 @RequiredArgsConstructor
 @EnableJpaRepositories
 public class CustomerController {
 
     private final CustomerService customerService;
 
+    public static final String URI = "/api/customer";
     @Value("${server.port}")
     private int serverPort;
 
@@ -29,12 +29,9 @@ public class CustomerController {
         return "Customer Microservice";
     }
 
-    @GetMapping("/api/customer")
-    public List<Link> getCustomer() {
-        return List.of(Link.of(getBaseURL()+"/get", "Get All Customers"));
-    }
 
-    @GetMapping("/api/customer/get")
+
+    @GetMapping(URI)
     @ResponseStatus(HttpStatus.OK)
     public List<CustomerDTO> getCustomers() {
         return customerService.getAllCustomers()
@@ -42,7 +39,7 @@ public class CustomerController {
                 .toList();
     }
 
-    @GetMapping("/api/customer/get/{id}")
+    @GetMapping(URI+"/{id}")
     @ResponseStatus(HttpStatus.OK)
     public CustomerDTO getCustomer(@PathVariable String id) {
         Optional<CustomerDTO> optionalCustomerDTO = customerService.getCustomer(id)
@@ -50,15 +47,11 @@ public class CustomerController {
         return optionalCustomerDTO.orElse(null);
     }
 
-    private Function<CustomerDTO, CustomerDTO> hateosLinkFunction = it -> it.add(Link.of(getBaseURL()+"/get/" + it.getId()));
-
-    @PostMapping("/api/customer")
+    @PostMapping(URI)
     @ResponseStatus(HttpStatus.CREATED)
     public CustomerDTO addCustomer(@RequestBody CustomerDTO customerDTO) {
         return customerService.addCustomer(customerDTO);
     }
 
-    private String getBaseURL(){
-        return "http://localhost:"+serverPort+"/api/customer";
-    }
+    private Function<CustomerDTO, CustomerDTO> hateosLinkFunction = it -> it.add(Link.of(URI+"/" + it.getId()));
 }

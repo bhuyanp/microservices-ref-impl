@@ -31,7 +31,7 @@ public class CustomerService {
                 .map(customer -> getCustomerDTO(customer))
                 .toList();
     }
-    public Optional<CustomerDTO> getCustomer(String id) {
+    public Optional<CustomerDTO> getCustomer(Integer id) {
         return customerRepo.findById(id).map(customer -> getCustomerDTO(customer));
     }
 

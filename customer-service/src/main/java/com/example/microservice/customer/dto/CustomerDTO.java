@@ -7,7 +7,7 @@ import org.springframework.hateoas.RepresentationModel;
 @Data
 @Builder
 public class CustomerDTO extends RepresentationModel<CustomerDTO> {
-    private String id;
+    private int id;
     private String firstName;
     private String lastName;
     private String email;

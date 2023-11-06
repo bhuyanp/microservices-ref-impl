@@ -12,7 +12,7 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import java.util.UUID;
 
 @SpringBootApplication
-public class CustomerApplication implements CommandLineRunner {
+public class CustomerApplication {
 
 	@Autowired
 	private CustomerRepo customerRepo;
@@ -21,11 +21,4 @@ public class CustomerApplication implements CommandLineRunner {
 		SpringApplication.run(CustomerApplication.class, args);
 	}
 
-
-	@Override
-	public void run(String... args) throws Exception {
-		customerRepo.deleteAll();
-		customerRepo.save(new Customer(UUID.randomUUID().toString(),"Prasanta", "Bhuyan", "p.bhuyan@gmail.com"));
-		customerRepo.save(new Customer(UUID.randomUUID().toString(),"PK", "Bhuyan", "prasanta.k.bhuyan@gmail.com"));
-	}
 }

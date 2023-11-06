@@ -5,22 +5,28 @@ This service uses MYSQL database. Follow below steps to get the service up and r
 
 ### Docker
 
-<code>docker pull mysql:latest</code>
+<code>docker pull mysql:8.0</code>
 
-<code>docker run -p 3306:3306 -e MYSQL_ROOT_PASSWORD=my-secret-pw -d mysql:latest</code>
+Using 8.0 due to flyway constraint
+
+<code>docker run -p 3306:3306 -e MYSQL_ROOT_PASSWORD=my-secret-pw -d mysql:8.0</code>
+
+
+### Launch the discovery server before stating customer
+<code>cd discovery-server</code>
+
+<code>mvn clean package</code>
+
+<code>mvn spring-boot:run</code>
 
 ### Launch the application locally using maven
 <code>cd customer-service</code>
 
+<code>mvn clean package</code>
+
 <code>mvn spring-boot:run</code>
 
-### Service URL
-http://localhost:8081
-
-[comment]: <> (### Launch the application as a docker container)
-
-[comment]: <> (mvn clean install)
-
-[comment]: <> (docker build -t customer-service .)
-
+### Discovery Service URL
+Goto discovery server to find the customer service endpoint
+http://localhost:8761
 

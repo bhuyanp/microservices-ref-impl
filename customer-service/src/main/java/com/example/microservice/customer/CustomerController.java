@@ -41,7 +41,7 @@ public class CustomerController {
 
     @GetMapping(URI+"/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public CustomerDTO getCustomer(@PathVariable String id) {
+    public CustomerDTO getCustomer(@PathVariable Integer id) {
         Optional<CustomerDTO> optionalCustomerDTO = customerService.getCustomer(id)
                 .map(hateosLinkFunction);
         return optionalCustomerDTO.orElse(null);

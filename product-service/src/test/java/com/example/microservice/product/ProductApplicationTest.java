@@ -1,19 +1,24 @@
 package com.example.microservice.product;
 
+import com.example.microservice.product.model.Product;
 import com.example.microservice.product.repo.ProductRepo;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.ServletContext;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.RequestBuilder;
+import org.springframework.test.web.servlet.ResultMatcher;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.testcontainers.containers.MongoDBContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
@@ -25,7 +30,7 @@ import java.math.BigDecimal;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringBootTest
 @Testcontainers
@@ -55,6 +60,11 @@ public class ProductApplicationTest {
     void contextLoads() {
     }
 
+    @BeforeEach
+    void reset() {
+        productRepo.deleteAll();
+    }
+
 
 
     @Test
@@ -66,9 +76,31 @@ public class ProductApplicationTest {
         mockMvc.perform(MockMvcRequestBuilders.post("/api/product")
                     .contentType("application/json")
                     .content(productStr))
-                .andExpect(status().isCreated());
-        //three inserted during start up
-        assertEquals(4, productRepo.findAll().size());
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.title").value("test product"));
+        assertEquals(1, productRepo.findAll().size());
+    }
+
+    @Test
+    void shouldListProductst() throws Exception {
+        productRepo.save(Product.builder()
+                .title("PA")
+                .description("descriptionA")
+                .price(BigDecimal.valueOf(5))
+                .build());
+
+        productRepo.save(Product.builder()
+                .title("PB")
+                .description("descriptionB")
+                .price(BigDecimal.valueOf(10))
+                .build());
+
+
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/product")
+                .contentType("application/json"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()").value(2));
     }
 }
 

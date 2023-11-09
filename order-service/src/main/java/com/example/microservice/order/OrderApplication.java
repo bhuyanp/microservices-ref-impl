@@ -5,17 +5,25 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
 
+@Controller
 @SpringBootApplication
 public class OrderApplication {
+
+
     public static void main(String[] args) {
         SpringApplication.run(OrderApplication.class, args);
     }
 
+    @GetMapping(path = { "/", "/actuator/info" })
+    public String home() {
+        return "redirect:/swagger-ui.html";
+    }
+
     @Bean
     public CommandLineRunner getCommandLineRunner(OrderRepo orderRepo) {
-        return arƒgs -> {
-            System.out.println(orderRepo.findAll());
-        };
+        return args -> System.out.println(orderRepo.findAll());
     }
 }

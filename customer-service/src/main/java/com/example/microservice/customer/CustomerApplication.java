@@ -1,24 +1,21 @@
 package com.example.microservice.customer;
 
-import com.example.microservice.customer.model.Customer;
-import com.example.microservice.customer.repo.CustomerRepo;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
-import org.springframework.web.servlet.config.annotation.EnableWebMvc;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
 
-import java.util.UUID;
-
+@Controller
 @SpringBootApplication
 public class CustomerApplication {
 
-	@Autowired
-	private CustomerRepo customerRepo;
-
 	public static void main(String[] args) {
 		SpringApplication.run(CustomerApplication.class, args);
+	}
+
+	@GetMapping(path = { "/", "/actuator/info" })
+	public String home() {
+		return "redirect:/swagger-ui.html";
 	}
 
 }

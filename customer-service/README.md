@@ -4,15 +4,18 @@
 This service uses MYSQL database. Follow below steps to get the service up and running.
 
 ### Docker
-
-<code>docker pull mysql:8.0</code>
-
 Using 8.0 due to flyway constraint
 
-<code>docker run -p 3306:3306 -e MYSQL_ROOT_PASSWORD=my-secret-pw -d mysql:8.0</code>
+❯ docker pull mysql:8.0
 
+❯ docker run -p 3306:3306 --name mysql-customer -e MYSQL_ROOT_PASSWORD=password -d mysql:8.0
 
-### Launch the discovery server before stating customer
+### Create Schema
+Create a new schema called microservice.
+
+mysql> CREATE schema microservice;
+
+### Launch the discovery server before starting customer
 <code>cd discovery-server</code>
 
 <code>mvn clean package</code>

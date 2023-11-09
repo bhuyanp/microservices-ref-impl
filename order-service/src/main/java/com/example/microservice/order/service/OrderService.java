@@ -9,10 +9,8 @@ import com.example.microservice.order.model.OrderLineItem;
 import com.example.microservice.order.repo.OrderRepo;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.cglib.core.CollectionUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
-import org.springframework.web.util.UriBuilder;
 
 import java.util.*;
 
@@ -30,7 +28,7 @@ public class OrderService {
                 .map(OrderLineItemDTO::getProductId)
                 .toList();
 
-        ProductAvailabilityDTOResponse[] response = webClientBuilder.build().get().uri("lb://product-service/api/product/availability",
+        ProductAvailabilityDTOResponse[] response = webClientBuilder.build().get().uri("lb://product-service/api/v1/product/availability",
                 uriBuilder -> uriBuilder.queryParam("pid", pids).build())
                 .retrieve()
                 .bodyToMono(ProductAvailabilityDTOResponse[].class)

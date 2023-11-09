@@ -4,12 +4,11 @@
 	<modelVersion>4.0.0</modelVersion>
 	<packaging>pom</packaging>
 	<modules>
+        <module>api-gateway</module>
 		<module>customer-service</module>
-        <module>product-service</module>
-		<module>order-service</module>
 		<module>discovery-server</module>
-        <module>api-gateway</module>
-        <module>api-gateway</module>
+		<module>order-service</module>
+        <module>product-service</module>
     </modules>
 	<parent>
 		<groupId>org.springframework.boot</groupId>
@@ -28,6 +27,7 @@
 		<spring-cloud.version>2022.0.4</spring-cloud.version>
 		<testcontainers.version>1.19.1</testcontainers.version>
 		<mysqlconnector.version>8.0.33</mysqlconnector.version>
+		<springdoc.version>2.2.0</springdoc.version>
 	</properties>
 	<dependencies>
 		<dependency>

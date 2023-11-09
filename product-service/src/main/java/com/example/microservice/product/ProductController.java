@@ -4,33 +4,29 @@ import com.example.microservice.product.dto.ProductAvailabilityDTOResponse;
 import com.example.microservice.product.dto.ProductDTO;
 import com.example.microservice.product.dto.ProductDTOResponse;
 import com.example.microservice.product.service.ProductService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.hateoas.Link;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
 
+@Slf4j
+@Tag(name = "Product Service")
 @RestController
 @RequiredArgsConstructor
-@Slf4j
 public class ProductController {
 
-    public static final String URI="/api/product";
+    public static final String URI="/api/v1/product";
 
     private final ProductService productService;
 
-    @Value("${server.port}")
-    private int serverPort;
 
-    @GetMapping
-    public String home() {
-        return "Product Microservice";
-    }
 
     @PostMapping(URI)
     @ResponseStatus(HttpStatus.CREATED)
@@ -38,7 +34,7 @@ public class ProductController {
         return productService.addProduct(productDTO);
     }
 
-    @GetMapping(URI)
+    @GetMapping(path = URI, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
     public List<ProductDTOResponse> getProducts() {
         return productService.getAllProducts()
@@ -47,7 +43,7 @@ public class ProductController {
                 .toList();
     }
 
-    @GetMapping(URI+"/{id}")
+    @GetMapping(path=URI+"/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
     public ProductDTOResponse getProduct(@PathVariable String id) {
         log.info("Looking for product with id : {}",id);
@@ -57,7 +53,7 @@ public class ProductController {
     }
 
 
-    @GetMapping(URI+"/availability")
+    @GetMapping(path=URI+"/availability", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
     public List<ProductAvailabilityDTOResponse> getProductAvailability(@RequestParam List<String> pid) {
         List<ProductAvailabilityDTOResponse> result = productService.getProductAvailabilities(pid);

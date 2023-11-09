@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.hateoas.Link;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -25,7 +26,7 @@ public class OrderController {
     public static final String URI="/api/v1/order";
 
 
-    @GetMapping(URI)
+    @GetMapping(path = URI, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
     public List<OrderDTOResponse> getCustomers() {
         return orderService.getAllOrders()
@@ -33,15 +34,13 @@ public class OrderController {
                 .toList();
     }
 
-    @PostMapping(URI)
+    @PostMapping(path = URI, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
     public OrderDTOResponse addCustomer(@RequestBody OrderDTO orderDTO) {
         return orderService.addOrder(orderDTO);
     }
 
-
-
-    @GetMapping(URI+"/{id}")
+    @GetMapping(path = URI+"/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
     public OrderDTOResponse getOrder(@PathVariable String id) {
         log.info("Looking for order with id : {}",id);

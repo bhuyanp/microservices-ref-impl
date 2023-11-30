@@ -31,3 +31,7 @@ build/
 
 ### VS Code ###
 .vscode/
+
+### Volumes ###
+mysql-*-data/
+mongo-data/

@@ -18,4 +18,12 @@ Basic foundational services are available to check out.
 
 
 
+mvn clean package 
+
+docker compose up --build -d
+
+
+
+
+
 

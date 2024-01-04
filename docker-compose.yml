@@ -71,6 +71,7 @@ services:
 
   discovery-server:
     build: discovery-server
+    container_name: discovery-server
     ports:
       - "8761:8761"
     expose:
@@ -81,6 +82,9 @@ services:
     depends_on:
       - discovery-server
     build: api-gateway/
+    container_name: api-gateway
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
     ports:
       - "8080:8080"
     expose:

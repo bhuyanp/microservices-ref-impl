@@ -1,36 +1,29 @@
 package com.example.microservice.product;
 
+import com.example.microservice.product.dto.ProductDTO;
 import com.example.microservice.product.model.Product;
 import com.example.microservice.product.repo.ProductRepo;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import jakarta.servlet.ServletContext;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.MediaType;
-import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.RequestBuilder;
-import org.springframework.test.web.servlet.ResultMatcher;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.testcontainers.containers.MongoDBContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
-
-import com.example.microservice.product.dto.ProductDTO;
 import org.testcontainers.utility.DockerImageName;
 
 import java.math.BigDecimal;
 
+import static com.example.microservice.product.ProductController.SERVICE_URI;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
 @Testcontainers
@@ -73,7 +66,7 @@ public class ProductApplicationTest {
                             .title("test product")
                             .description("description")
                             .price(BigDecimal.valueOf(5)).build());
-        mockMvc.perform(MockMvcRequestBuilders.post("/api/product")
+        mockMvc.perform(MockMvcRequestBuilders.post(SERVICE_URI)
                     .contentType("application/json")
                     .content(productStr))
                 .andExpect(status().isCreated())
@@ -82,7 +75,7 @@ public class ProductApplicationTest {
     }
 
     @Test
-    void shouldListProductst() throws Exception {
+    void shouldListProducts() throws Exception {
         productRepo.save(Product.builder()
                 .title("PA")
                 .description("descriptionA")
@@ -97,7 +90,7 @@ public class ProductApplicationTest {
 
 
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/api/product")
+        mockMvc.perform(MockMvcRequestBuilders.get(SERVICE_URI)
                 .contentType("application/json"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()").value(2));

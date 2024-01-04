@@ -22,19 +22,19 @@ import java.util.function.Function;
 @RequiredArgsConstructor
 public class ProductController {
 
-    public static final String URI="/api/v1/product";
+    public static final String SERVICE_URI="/api/v1/product";
 
     private final ProductService productService;
 
 
 
-    @PostMapping(URI)
+    @PostMapping(SERVICE_URI)
     @ResponseStatus(HttpStatus.CREATED)
     public ProductDTOResponse addProduct(@RequestBody ProductDTO productDTO) {
         return productService.addProduct(productDTO);
     }
 
-    @GetMapping(path = URI, produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(path = SERVICE_URI, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
     public List<ProductDTOResponse> getProducts() {
         return productService.getAllProducts()
@@ -43,7 +43,7 @@ public class ProductController {
                 .toList();
     }
 
-    @GetMapping(path=URI+"/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(path=SERVICE_URI+"/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
     public ProductDTOResponse getProduct(@PathVariable String id) {
         log.info("Looking for product with id : {}",id);
@@ -53,7 +53,7 @@ public class ProductController {
     }
 
 
-    @GetMapping(path=URI+"/availability", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(path=SERVICE_URI+"/availability", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
     public List<ProductAvailabilityDTOResponse> getProductAvailability(@RequestParam List<String> pid) {
         List<ProductAvailabilityDTOResponse> result = productService.getProductAvailabilities(pid);
@@ -61,7 +61,7 @@ public class ProductController {
         return result;
     }
 
-    private final Function<ProductDTOResponse, ProductDTOResponse> hateosLinkFunction = it -> it.add(Link.of(URI+"/" + it.getId()));
+    private final Function<ProductDTOResponse, ProductDTOResponse> hateosLinkFunction = it -> it.add(Link.of(SERVICE_URI+"/" + it.getId()));
 
 }
 

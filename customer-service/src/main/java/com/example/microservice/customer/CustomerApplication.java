@@ -23,14 +23,14 @@ public class CustomerApplication {
 
 	@GetMapping(path = { "/", "/actuator/info" })
 	public String home() {
-		return "redirect:/swagger-ui.html";
+		return "redirect:/swagger-ui/index.html";
 	}
 
 	@Bean
 	CommandLineRunner getCommandLineRunner(){
 		return args->{
-			System.out.println("Eureka: http://localhost:8761/");
-			System.out.println("API Gateway(wait 30s): http://localhost:8080/api/v1/customer");
+			System.out.println("Eureka: http://localhost:8080/eureka/web");
+			System.out.println("Swagger UI(wait 30s): http://localhost:8080/customer");
 		};
 	}
 

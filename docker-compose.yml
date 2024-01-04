@@ -69,6 +69,33 @@ services:
     volumes:
       - ./mongo-data:/data/db
 
+  discovery-server:
+    build: discovery-server
+    ports:
+      - "8761:8761"
+    expose:
+      - "8761"
+    restart: on-failure
+
+  api-gateway:
+    depends_on:
+      - discovery-server
+    build: api-gateway/
+    ports:
+      - "8080:8080"
+    expose:
+      - "8080"
+    restart: on-failure
+
+#  customer-service:
+#    depends_on:
+#      - mysql-customer
+#      - api-gateway
+#    build: customer-service/
+#    restart: on-failure
+
+
+
 
 
 

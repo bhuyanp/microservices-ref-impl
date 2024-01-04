@@ -2,10 +2,9 @@ package com.example.microservice.customer;
 
 import com.example.microservice.customer.dto.CustomerDTO;
 import com.example.microservice.customer.service.CustomerService;
-
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.hateoas.Link;
 import org.springframework.http.HttpStatus;
@@ -20,6 +19,7 @@ import java.util.function.Function;
 @RequiredArgsConstructor
 @EnableJpaRepositories
 @Tag(name = CustomerController.TAG)
+@SecurityRequirement(name = "Oauth2Password")
 public class CustomerController {
     public static final String TAG = "Customer Service";
 

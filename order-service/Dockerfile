@@ -1,6 +1,6 @@
 FROM amazoncorretto:17
 
-ARG JARFILE=target/product*.jar
+ARG JARFILE=target/order*.jar
 
 COPY ${JARFILE} app.jar
 

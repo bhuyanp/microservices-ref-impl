@@ -6,6 +6,7 @@
 	<modules>
 		<module>discovery-server</module>
         <module>api-gateway</module>
+		<module>open-api-doc</module>
 		<module>customer-service</module>
 		<module>order-service</module>
         <module>product-service</module>

@@ -8,7 +8,7 @@ Don't repeat if you have done this setup as part of product service.
 
 <code>docker pull mongo</code>
 
-<code>docker run -p 27017:27017 -d mongo:latest
+<code>docker run -p 27017:27017 --name microservice-mongo -d mongo:latest
 </code>
 
 ### Launch the application locally using maven

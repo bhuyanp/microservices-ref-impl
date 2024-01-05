@@ -11,12 +11,15 @@ import org.springframework.security.web.server.SecurityWebFilterChain;
 public class SecurityConfig {
 
     @Bean
-    public SecurityWebFilterChain getFilterChain(ServerHttpSecurity http) throws Exception {
+    public SecurityWebFilterChain getFilterChain(ServerHttpSecurity http) {
         return http
                 .csrf().disable()
                 .authorizeExchange(authorizeExchangeSpec -> authorizeExchangeSpec
                         .pathMatchers("/eureka/**").permitAll()
+                        .pathMatchers("/api/v1/*/**").permitAll()
                         .pathMatchers("/customer/**").permitAll()
+                        .pathMatchers("/product/**").permitAll()
+                        .pathMatchers("/order/**").permitAll()
                         .pathMatchers("/*.css").permitAll()
                         .pathMatchers("/*.js").permitAll()
                         .anyExchange().authenticated())

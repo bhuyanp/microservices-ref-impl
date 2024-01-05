@@ -1,4 +1,4 @@
-package com.example.microservice.config;
+package com.example.microservice.openapidoc;
 
 import io.swagger.v3.oas.annotations.enums.SecuritySchemeIn;
 import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
@@ -44,10 +44,11 @@ public class OpenAPIConfig {
                         .termsOfService("http://swagger.io/terms/")
                         .license(new License().name("Apache 2.0").url("http://springdoc.org"))
                         .contact(new Contact().name("Prasanta Bhuyan").email("prasanta.k.bhuyan@gmail.com"))
-                ).servers(List.of(
-                        new Server()
-                                .url("http://localhost:8080")
-                                .description(""))
                 );
+//                .servers(List.of(
+//                        new Server()
+//                                .url("http://localhost:8080")
+//                                .description(""))
+//                );
     }
 }

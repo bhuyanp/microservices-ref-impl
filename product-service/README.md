@@ -7,7 +7,7 @@ This service uses MongoDB. Follow below steps to get the service up and running.
 
 <code>docker pull mongo</code>
 
-<code>docker run -p 27017:27017 -d mongo:latest
+<code>docker run -p 27017:27017 --name microservice-mongo -d mongo:latest
 </code>
 
 ### Launch the application locally using maven

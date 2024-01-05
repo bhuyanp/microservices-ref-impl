@@ -56,6 +56,10 @@ public class ProductController {
     @GetMapping(path=SERVICE_URI+"/availability", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
     public List<ProductAvailabilityDTOResponse> getProductAvailability(@RequestParam List<String> pid) {
+
+        //Uncomment thread.sleep to test Timeout scenario from order service
+        //Thread.sleep(6000);
+
         List<ProductAvailabilityDTOResponse> result = productService.getProductAvailabilities(pid);
         log.info("getProductAvailability:{}",result);
         return result;

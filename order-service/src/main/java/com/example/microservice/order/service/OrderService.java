@@ -4,6 +4,7 @@ import com.example.microservice.order.dto.OrderDTO;
 import com.example.microservice.order.dto.OrderDTOResponse;
 import com.example.microservice.order.dto.OrderLineItemDTO;
 import com.example.microservice.order.dto.ProductAvailabilityDTOResponse;
+import com.example.microservice.order.exception.OrderException;
 import com.example.microservice.order.model.Order;
 import com.example.microservice.order.model.OrderLineItem;
 import com.example.microservice.order.repo.OrderRepo;
@@ -21,7 +22,7 @@ public class OrderService {
     private final OrderRepo orderRepo;
     private final WebClient.Builder webClientBuilder;
 
-    public OrderDTOResponse addOrder(OrderDTO orderDTO) {
+    public OrderDTOResponse addOrder(OrderDTO orderDTO) throws OrderException {
 
         List<String> pids = orderDTO.getOrderLineItems()
                 .stream()
@@ -35,7 +36,7 @@ public class OrderService {
                 .block();
 
         log.info("Availability check response:"+ Arrays.toString(response));
-        if (null==response || response.length==0) throw new IllegalArgumentException("Product not found. Please try again later.");
+        if (null==response || response.length==0) throw new OrderException("Product not found. Please try again later.");
 
 
         Map<String, Integer> availabilityMap = new HashMap<>();
@@ -48,7 +49,7 @@ public class OrderService {
                 .allMatch(orderLineItemDTO ->
                         orderLineItemDTO.getQuantity() <= availabilityMap.get(orderLineItemDTO.getProductId()));
 
-        if (!allProductsInStock) throw new IllegalArgumentException("Not enough inventory. Please try again later.");
+        if (!allProductsInStock) throw new OrderException("Not enough inventory. Please try again later.");
         Order newlyCreatedOrder =
                 orderRepo.save(Order.builder()
                         .orderById(orderDTO.getOrderById())

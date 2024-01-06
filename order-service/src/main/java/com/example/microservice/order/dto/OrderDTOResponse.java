@@ -1,16 +1,13 @@
 package com.example.microservice.order.dto;
 
-import com.example.microservice.order.model.OrderLineItem;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.hateoas.RepresentationModel;
 
 import java.util.Date;
 import java.util.List;
 
-@Data
+@Getter
+@Setter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
@@ -20,5 +17,5 @@ public class OrderDTOResponse extends RepresentationModel<OrderDTOResponse> {
     private String orderByName;
     private String orderByEmail;
     private Date orderDate;
-    private List<OrderLineItemDTO> orderLineItems;
+    private List<OrderLineItem> orderLineItems;
 }

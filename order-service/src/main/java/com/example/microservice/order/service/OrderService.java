@@ -1,12 +1,11 @@
 package com.example.microservice.order.service;
 
-import com.example.microservice.order.dto.OrderDTO;
+import com.example.microservice.order.dto.OrderRequest;
 import com.example.microservice.order.dto.OrderDTOResponse;
-import com.example.microservice.order.dto.OrderLineItemDTO;
+import com.example.microservice.order.dto.OrderLineItem;
 import com.example.microservice.order.dto.ProductAvailabilityDTOResponse;
 import com.example.microservice.order.exception.OrderException;
 import com.example.microservice.order.model.Order;
-import com.example.microservice.order.model.OrderLineItem;
 import com.example.microservice.order.repo.OrderRepo;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,11 +21,11 @@ public class OrderService {
     private final OrderRepo orderRepo;
     private final WebClient.Builder webClientBuilder;
 
-    public OrderDTOResponse addOrder(OrderDTO orderDTO) throws OrderException {
+    public OrderDTOResponse addOrder(OrderRequest orderDTO) throws OrderException {
 
         List<String> pids = orderDTO.getOrderLineItems()
                 .stream()
-                .map(OrderLineItemDTO::getProductId)
+                .map(OrderLineItem::getProductId)
                 .toList();
 
         ProductAvailabilityDTOResponse[] response = webClientBuilder.build().get().uri("lb://product-service/api/v1/product/availability",
@@ -59,7 +58,7 @@ public class OrderService {
                         .orderLineItems(orderDTO.getOrderLineItems()
                                 .stream()
                                 .map(orderLineItemDTO ->
-                                        new OrderLineItem(orderLineItemDTO.getProductId(), orderLineItemDTO.getQuantity())).toList())
+                                        new com.example.microservice.order.model.OrderLineItem(orderLineItemDTO.getProductId(), orderLineItemDTO.getQuantity())).toList())
                         .build());
         return getOrderDTOResponse(newlyCreatedOrder);
 
@@ -84,7 +83,7 @@ public class OrderService {
                 .orderLineItems(order.getOrderLineItems()
                         .stream()
                         .map(orderLineItem ->
-                                new OrderLineItemDTO(orderLineItem.getProductId(), orderLineItem.getQuantity())).toList())
+                                new OrderLineItem(orderLineItem.getProductId(), orderLineItem.getQuantity())).toList())
                 .build();
     }
 

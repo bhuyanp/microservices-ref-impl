@@ -7,7 +7,8 @@ import org.springframework.hateoas.RepresentationModel;
 
 @Data
 @Builder
-public class CustomerRequest {
+public class CustomerDTO extends RepresentationModel<CustomerDTO> {
+    private int id;
     @NotBlank(message = "First name is mandatory")
     private String firstName;
     @NotBlank(message = "Last name is mandatory")

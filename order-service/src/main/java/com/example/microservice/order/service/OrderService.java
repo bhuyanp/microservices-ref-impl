@@ -1,8 +1,8 @@
 package com.example.microservice.order.service;
 
-import com.example.microservice.order.dto.OrderRequest;
 import com.example.microservice.order.dto.OrderDTOResponse;
 import com.example.microservice.order.dto.OrderLineItem;
+import com.example.microservice.order.dto.OrderRequest;
 import com.example.microservice.order.dto.ProductAvailabilityDTOResponse;
 import com.example.microservice.order.exception.OrderException;
 import com.example.microservice.order.model.Order;
@@ -10,12 +10,7 @@ import com.example.microservice.order.repo.OrderRepo;
 import io.micrometer.observation.annotation.Observed;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.web.client.RestTemplateBuilder;
-import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.client.loadbalancer.LoadBalancerClient;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.RequestEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -32,7 +27,7 @@ public class OrderService {
     private final RestTemplate restTemplate;
     private final LoadBalancerClient loadBalancerClient;
 
-    @Observed(name="placeOrder")//http://127.0.0.1:8083/actuator/metrics/placeOrder
+    @Observed(name="OrderService.placeOrder", contextualName="placeOrder")//http://127.0.0.1:8083/actuator/metrics/placeOrder
     public OrderDTOResponse placeOrder(OrderRequest orderDTO) throws OrderException {
         log.info("Placing order :"+orderDTO);
 

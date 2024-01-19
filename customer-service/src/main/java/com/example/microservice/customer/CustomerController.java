@@ -39,6 +39,7 @@ public class CustomerController {
     @GetMapping(path = URI, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
     public List<CustomerDTO> getCustomers() {
+        log.info("Getting all customers.");
         return customerService.getAllCustomers()
                 .stream().map(hateosLinkFunction)
                 .toList();

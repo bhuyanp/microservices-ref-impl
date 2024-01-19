@@ -5,14 +5,10 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
-
-import java.lang.annotation.*;
-import java.util.Arrays;
 
 @Controller
 @SpringBootConfiguration
@@ -22,13 +18,13 @@ import java.util.Arrays;
 		"com.example.microservice.openapidoc",
 		"com.example.microservice.customer"
 })
-public class CustomerApplication {
+public class CustomerServiceApplication {
 
 	@Value("${spring.profiles.active:unknown}")
 	String profile;
 
 	public static void main(String[] args) {
-		SpringApplication.run(CustomerApplication.class, args);
+		SpringApplication.run(CustomerServiceApplication.class, args);
 	}
 
 	@GetMapping(path = { "/", "/actuator/info" })

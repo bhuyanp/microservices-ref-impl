@@ -102,7 +102,6 @@ services:
     depends_on:
       - mysql-keycloak
 
-
   ## Mongo Docker Compose Config for Order and Product services
   mongo:
     container_name: mongo

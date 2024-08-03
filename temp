@@ -1,0 +1,118 @@
+package org.ieee.innovation.dynamodb.repo;
+
+
+import jakarta.persistence.Table;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.ieee.innovation.dynamodb.model.DynamoDBEntity;
+import software.amazon.awssdk.annotations.NotNull;
+import software.amazon.awssdk.enhanced.dynamodb.*;
+import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbPartitionKey;
+import software.amazon.awssdk.enhanced.dynamodb.model.PageIterable;
+import software.amazon.awssdk.enhanced.dynamodb.model.ScanEnhancedRequest;
+import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
+
+import java.beans.Introspector;
+import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
+import java.util.List;
+import java.util.Optional;
+import java.util.function.Consumer;
+import java.util.stream.Stream;
+
+@Slf4j
+@RequiredArgsConstructor
+public abstract class DynamoDBRepository<T extends DynamoDBEntity, R, S> {
+    private final DynamoDbEnhancedClient dynamoDbEnhancedClient;
+    private Class<T> getEntityClass() {
+        return (Class<T>) ((ParameterizedType) this.getClass().getGenericSuperclass()).getActualTypeArguments()[0];
+    }
+    private String getGetTableName() {
+        Class<T> entityClass = getEntityClass();
+        Table table = entityClass.getAnnotation(Table.class);
+        String tableName = null == table ? entityClass.getSimpleName() : table.name();
+        log.info("Table name: {}", tableName);
+        return tableName;
+    }
+
+    private String getPartitionKeyName() {
+        Class<T> entityClass = getEntityClass();
+        Method partitionKeyGetMethod = Stream.of(entityClass.getMethods())
+                .filter(m -> m.getName().startsWith("get") && m.getAnnotation(DynamoDbPartitionKey.class) != null)
+                .findAny().orElseThrow(() -> new IllegalStateException("DynamoDbPartitionKey is not defined in the Entity class"));
+        String partitionKeyName = Introspector.decapitalize(partitionKeyGetMethod.getName().substring(3));
+        log.info("Partition key name: {}", partitionKeyName);
+        return partitionKeyName;
+    }
+
+    private void checkPartitionKey() {
+        Class<T> entityClass = getEntityClass();
+        Method partitionKeyGetMethod = Stream.of(entityClass.getMethods())
+                .filter(m -> m.getName().startsWith("get") && m.getAnnotation(DynamoDbPartitionKey.class) != null)
+                .findAny().orElseThrow(() -> new IllegalStateException("DynamoDbPartitionKey is not defined in the Entity class"));
+    }
+
+    private AttributeValue getKeyAttributeValue(Object key) {
+        AttributeValue.Builder builder = AttributeValue.builder();
+        switch (key) {
+            case String s -> builder.s(s).build();
+            case Integer i -> builder.n(i.toString());
+            case Long l -> builder.n(l.toString());
+            case Boolean b -> builder.bool(b);
+            default ->
+                    throw new UnsupportedOperationException("Only String, Long and Integer are allowed as partition key type.");
+        }
+        return builder.build();
+    }
+
+    public Optional<T> getItem(@NotNull R partitionKey) {
+        DynamoDbTable<T> table = getTable();
+        AttributeValue attributeValue = getKeyAttributeValue(partitionKey);
+        Key key = Key.builder()
+                .partitionValue(attributeValue)
+                .build();
+        T item = table.getItem(r -> r.key(key));
+        return Optional.ofNullable(item);
+    }
+
+    public List<T> getItems() {
+        PageIterable<T> result = getTable().scan();
+        return result.items().stream().toList();
+    }
+
+    public List<T> getItems(Consumer<ScanEnhancedRequest.Builder> scanRequestFilter) {
+        PageIterable<T> result = getTable().scan(scanRequestFilter);
+        return result.items().stream().toList();
+    }
+
+
+    public Optional<T> getItem(@NotNull R partitionKey, @NotNull S sortKey) {
+        DynamoDbTable<T> table = getTable();
+        AttributeValue partitionKeyValue = getKeyAttributeValue(partitionKey);
+        AttributeValue sortKeyValue = getKeyAttributeValue(sortKey);
+        Key key = Key.builder()
+                .partitionValue(partitionKeyValue)
+                .sortValue(sortKeyValue)
+                .build();
+        T item = table.getItem(r -> r.key(key));
+        return Optional.ofNullable(item);
+    }
+
+    public List<T> getItems(@NotNull R partitionKey) {
+        Expression partitionKeyFilterExpression = Expression.builder()
+                .expression("#a = :b")
+                .putExpressionName("#a", getPartitionKeyName())
+                .putExpressionValue(":b", getKeyAttributeValue(partitionKey))
+                .build();
+        PageIterable<T> result = getTable().scan(r -> r.filterExpression(partitionKeyFilterExpression));
+        return result.items().stream().toList();
+    }
+
+    public void saveItem(@NotNull T item) {
+        getTable().putItem(item);
+    }
+
+    private DynamoDbTable<T> getTable() {
+        return dynamoDbEnhancedClient.table(getGetTableName(), TableSchema.fromBean(getEntityClass()));
+    }
+}
